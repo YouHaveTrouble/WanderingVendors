@@ -4,6 +4,7 @@ import eu.endermite.wanderingvendors.WanderingVendors;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -47,6 +48,13 @@ public class HeadTrade {
         } catch (NullPointerException e) {
             WanderingVendors.getPlugin().getLogger().severe("Could not find player.");
         }
+
+        try {
+            for (String enchdata : config.getStringList("trades." + configsection + "." + type + ".enchants")) {
+                String[] ench = enchdata.split(":");
+                result.addEnchantment(Enchantment.getByName(ench[0]), Integer.parseInt(ench[1]));
+            }
+        } catch (NullPointerException ignored) {}
 
         return result;
     }

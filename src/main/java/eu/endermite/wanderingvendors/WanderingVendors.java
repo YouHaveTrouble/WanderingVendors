@@ -16,9 +16,7 @@ public final class WanderingVendors extends JavaPlugin {
         plugin = this;
         configCache = new ConfigCache();
         Bukkit.getPluginManager().registerEvents(new WanderingTraderSpawn(), this);
-
     }
-
 
     public static WanderingVendors getPlugin() {return plugin;}
     public static ConfigCache getConfigCache() {return configCache;}

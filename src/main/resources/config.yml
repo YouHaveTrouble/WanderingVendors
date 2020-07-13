@@ -1,38 +1,38 @@
 trades:
-  1:
+  item_example:
     maxuses: 1
     result:
       type: item
-      material: GOLDEN_HELMET
-      custommodeldata: 1001
       amount: 1
-      name: "Golden Crown"
-      lore:
+      material: GOLDEN_HELMET
+      custommodeldata: 1001 # optional
+      name: "Golden Crown" # optional
+      lore: # optional
         - "Only for the worthy"
         - "Hail to the king, baby"
-      enchants:
+      enchants: # optional
         - DURABILITY:2
     ingridient1:
       type: item
-      material: EMERALD
-      custommodeldata: 1002
-      enchants:
-        - DURABILITY:1
       amount: 1
-
+      material: EMERALD
+      custommodeldata: 1001 # optional
+      enchants: # optional
+        - DURABILITY:1
     ingridient2:
       type: none
-  2:
+  head_example:
     maxuses: 1
     result:
-      type: item
-      material: IRON_HELMET
+      type: head
+      head: YouHaveTrouble
       amount: 1
-      name: "The Hat"
+      name: "YouHaveTrouble's Head"
       lore:
-        - "Hattest Hat of Hat"
+        - "You're free to hit it"
+        - "if I do something stupid"
       enchants:
-        - DURABILITY:5
+        - DURABILITY:10
     ingridient1:
       type: item
       material: EMERALD

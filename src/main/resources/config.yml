@@ -37,6 +37,9 @@ trades:
       type: item
       material: EMERALD
       amount: 1
+      name: "Cool Emerald" #optional
+      lore: # optional
+        - "Emerald, but cooler"
     ingridient2:
       type: item
       material: EMERALD

@@ -31,7 +31,8 @@ public class ItemTrade {
 
         try {
             List<String> lore = config.getStringList("trades." + configsection + "." + type + ".lore");
-            resultmeta.setLore(lore);
+            if (!lore.isEmpty())
+                resultmeta.setLore(lore);
         } catch (NullPointerException ignored) {
         }
 

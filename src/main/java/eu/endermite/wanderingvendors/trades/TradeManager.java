@@ -3,6 +3,7 @@ package eu.endermite.wanderingvendors.trades;
 import eu.endermite.wanderingvendors.WanderingVendors;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,12 +35,33 @@ public class TradeManager {
                 ItemStack result = new ItemStack(Material.getMaterial(material), amount);
 
                 String name = config.getString("trades."+configsection+".result.name");
-                List<String> lore = config.getStringList("trades."+configsection+".result.lore");
+
                 ItemMeta resultmeta = result.getItemMeta();
-                resultmeta.setLocalizedName(name);
-                resultmeta.setDisplayName(name);
-                resultmeta.setLore(lore);
+
+                try {
+                    resultmeta.setLocalizedName(name);
+                    resultmeta.setDisplayName(name);
+                } catch (NullPointerException ignored) {}
+                try {
+                    List<String> lore = config.getStringList("trades."+configsection+".result.lore");
+                    resultmeta.setLore(lore);
+                } catch (NullPointerException ignored) {}
+                try {
+                    resultmeta.setCustomModelData(config.getInt("trades."+configsection+".result.custommodeldata"));
+                } catch (NullPointerException ignored) {}
+
+
                 result.setItemMeta(resultmeta);
+
+                for (String enchandlvl : config.getStringList("trades."+configsection+".result.enchants")) {
+
+                    String[] enchinfo = enchandlvl.split(":");
+                    try {
+                        result.addUnsafeEnchantment(Enchantment.getByName(enchinfo[0]), Integer.parseInt(enchinfo[1]));
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 return result;
 
@@ -67,6 +89,16 @@ public class TradeManager {
                 resultmeta.setLocalizedName(name);
                 resultmeta.setDisplayName(name);
                 result.setItemMeta(resultmeta);
+
+                for (String enchandlvl : config.getStringList("trades."+configsection+".ingridient"+number+".enchants")) {
+
+                    String[] enchinfo = enchandlvl.split(":");
+                    try {
+                        result.addUnsafeEnchantment(Enchantment.getByName(enchinfo[0]), Integer.parseInt(enchinfo[1]));
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 return result;
 
@@ -102,7 +134,7 @@ public class TradeManager {
             recipe.addIngredient(parseIngridient(configsection, 1));
         }
         if (parseIngridient(configsection, 2) != null) {
-            recipe.addIngredient(parseIngridient(configsection, 1));
+            recipe.addIngredient(parseIngridient(configsection, 2));
         }
         return recipe;
 

@@ -1,0 +1,37 @@
+trades:
+  1:
+    maxuses: 1
+    result:
+      type: item
+      material: GOLDEN_HELMET
+      amount: 1
+      name: "Golden Crown"
+      lore:
+        - "Only for the worthy"
+        - "Hail to the king, baby"
+      enchants:
+        - DURABILITY:2
+    ingridient1:
+      type: item
+      material: EMERALD
+      amount: 1
+    ingridient2:
+      type: none
+  2:
+    maxuses: 1
+    result:
+      type: item
+      material: GOLDEN_HELMET
+      amount: 1
+      name: "Golden Crown"
+      lore:
+        - "Only for the worthy"
+        - "Hail to the king, baby"
+      enchants:
+        - DURABILITY:2
+    ingridient1:
+      type: item
+      material: EMERALD
+      amount: 1
+    ingridient2:
+      type: none

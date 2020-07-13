@@ -1,0 +1,6 @@
+name: WanderingVendors
+version: ${project.version}
+main: eu.endermite.wanderingvendors.WanderingVendors
+api-version: 1.16
+authors: [YouHaveTrouble]
+description: Make wandering traders useful for once

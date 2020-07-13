@@ -1,5 +1,6 @@
 package eu.endermite.wanderingvendors;
 
+import eu.endermite.wanderingvendors.commands.MainCommand;
 import eu.endermite.wanderingvendors.config.ConfigCache;
 import eu.endermite.wanderingvendors.listeners.WanderingTraderSpawn;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ public final class WanderingVendors extends JavaPlugin {
         plugin = this;
         configCache = new ConfigCache();
         Bukkit.getPluginManager().registerEvents(new WanderingTraderSpawn(), this);
+        getCommand("wanderingvendors").setExecutor(new MainCommand());
     }
 
     public static WanderingVendors getPlugin() {return plugin;}

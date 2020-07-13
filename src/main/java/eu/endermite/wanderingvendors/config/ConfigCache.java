@@ -15,8 +15,12 @@ public class ConfigCache {
     public ConfigCache() {
         for (String s : config.getConfigurationSection("trades").getKeys(false)) {
 
-            MerchantRecipe newTrade = TradeManager.createMerchantRecipe(s);
-            merchantTrades.add(newTrade);
+            try {
+                MerchantRecipe newTrade = TradeManager.createMerchantRecipe(s);
+                merchantTrades.add(newTrade);
+            } catch (NullPointerException e) {
+                WanderingVendors.getPlugin().getLogger().severe("Failed to load trade "+s);
+            }
 
         }
     }

@@ -52,7 +52,7 @@ public class HeadTrade {
         try {
             for (String enchdata : config.getStringList("trades." + configsection + "." + type + ".enchants")) {
                 String[] ench = enchdata.split(":");
-                result.addEnchantment(Enchantment.getByName(ench[0]), Integer.parseInt(ench[1]));
+                result.addUnsafeEnchantment(Enchantment.getByName(ench[0]), Integer.parseInt(ench[1]));
             }
         } catch (NullPointerException ignored) {}
 

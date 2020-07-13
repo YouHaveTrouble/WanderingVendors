@@ -28,15 +28,17 @@ public class ItemTrade {
             resultmeta.setDisplayName(name);
         } catch (NullPointerException ignored) {
         }
-        if (type.equalsIgnoreCase("result")) {
-            try {
-                List<String> lore = config.getStringList("trades." + configsection + "." + type + ".lore");
-                resultmeta.setLore(lore);
-            } catch (NullPointerException ignored) {
-            }
-        }
+
         try {
-            resultmeta.setCustomModelData(config.getInt("trades." + configsection + "." + type + ".custommodeldata"));
+            List<String> lore = config.getStringList("trades." + configsection + "." + type + ".lore");
+            resultmeta.setLore(lore);
+        } catch (NullPointerException ignored) {
+        }
+
+        try {
+            int cmd = config.getInt("trades." + configsection + "." + type + ".custommodeldata");
+            if (cmd != 0)
+                resultmeta.setCustomModelData(cmd);
         } catch (NullPointerException ignored) {
         }
 
@@ -45,9 +47,10 @@ public class ItemTrade {
         try {
             for (String enchdata : config.getStringList("trades." + configsection + "." + type + ".enchants")) {
                 String[] ench = enchdata.split(":");
-                result.addEnchantment(Enchantment.getByName(ench[0]), Integer.parseInt(ench[1]));
+                result.addUnsafeEnchantment(Enchantment.getByName(ench[0]), Integer.parseInt(ench[1]));
             }
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
 
         return result;
 

@@ -13,10 +13,11 @@ public class CrazyCratesKeyTrade {
     public static ItemStack getKey(String configsection, String type) {
 
         String cratename = config.getString("trades." + configsection + "." + type + ".crate");
+        int amount = config.getInt("trades." + configsection + "." + type + ".amount");
 
         for (Crate crate : CrazyCrates.getInstance().getCrates()) {
             if (crate.getName().equalsIgnoreCase(cratename)) {
-                return crate.getKey(1);
+                return crate.getKey(amount);
             }
         }
         return null;

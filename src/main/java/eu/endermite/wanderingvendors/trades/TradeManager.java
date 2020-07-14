@@ -1,6 +1,7 @@
 package eu.endermite.wanderingvendors.trades;
 
 import eu.endermite.wanderingvendors.WanderingVendors;
+import eu.endermite.wanderingvendors.trades.types.CrazyCratesKeyTrade;
 import eu.endermite.wanderingvendors.trades.types.HeadTrade;
 import eu.endermite.wanderingvendors.trades.types.ItemTrade;
 import org.bukkit.Material;
@@ -12,21 +13,6 @@ import org.bukkit.inventory.MerchantRecipe;
 public class TradeManager {
 
     private static Configuration config = WanderingVendors.getPlugin().getConfig();
-
-
-    private static boolean checkState(String configstring) {
-        if (config.getString(configstring).equalsIgnoreCase("none")) {
-            return false;
-        } else if (config.getString(configstring).equalsIgnoreCase("item")) {
-            return true;
-        } else if (config.getString(configstring).equalsIgnoreCase("head")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
 
     public static MerchantRecipe createMerchantRecipe(String configsection) {
         String resultstring = "";
@@ -44,6 +30,14 @@ public class TradeManager {
                 break;
             case ("head"):
                 result = HeadTrade.getHead(configsection, "result");
+                break;
+            case ("crazycrateskey"):
+                if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("CrazyCrates") != null) {
+                    result = CrazyCratesKeyTrade.getKey(configsection, "result");
+                } else {
+                    WanderingVendors.getPlugin().getLogger().severe("CrazyCrates is required for crazycrateskey trade");
+                    return null;
+                }
                 break;
             default:
                 return null;
@@ -73,6 +67,14 @@ public class TradeManager {
                     break;
                 case ("head"):
                     ing = HeadTrade.getHead(configsection, "ingridient"+i);
+                    break;
+                case ("crazycrateskey"):
+                    if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("CrazyCrates") != null) {
+                        ing = CrazyCratesKeyTrade.getKey(configsection, "ingridient"+i);
+                    } else {
+                        WanderingVendors.getPlugin().getLogger().severe("CrazyCrates is required for crazycrateskey trade");
+                        return null;
+                    }
                     break;
                 default:
                     ing = new ItemStack(Material.AIR, 1);

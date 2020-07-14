@@ -62,6 +62,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>nexus</id>
+            <url>https://nexus.badbones69.com/repository/maven-releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -69,6 +73,12 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.16.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.badbones69</groupId>
+            <artifactId>crazycrates-plugin</artifactId>
+            <version>1.10</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

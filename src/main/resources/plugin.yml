@@ -3,6 +3,8 @@ version: ${project.version}
 main: eu.endermite.wanderingvendors.WanderingVendors
 api-version: 1.16
 authors: [YouHaveTrouble]
+softdepend:
+  - CrazyCrates
 description: Make wandering traders useful for once
 commands:
   wanderingvendors:

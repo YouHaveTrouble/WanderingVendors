@@ -44,3 +44,17 @@ trades:
       type: item
       material: EMERALD
       amount: 1
+  crazycrateskey_example:
+    maxuses: 1
+    result:
+      type: crazycrateskey
+      crate: crazy
+      amount: 1
+    ingridient1:
+      type: crazycrateskey
+      crate: basic
+      amount: 1
+    ingridient2:
+      type: item
+      material: EMERALD
+      amount: 1

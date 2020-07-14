@@ -1,7 +1,7 @@
 options:
   # Trade randomizer. Disable to have static trades
   randomize:
-    enabled: true
+    enabled: false
     # How many trades each traveling merchant should have
     max-trades: 2
 trades:
@@ -63,4 +63,18 @@ trades:
     ingridient2:
       type: item
       material: EMERALD
+      amount: 1
+  headsplus_example:
+    maxuses: 1
+    result:
+      type: headsplus
+      customhead: lava_bucket
+      amount: 2
+    ingridient1:
+      type: item
+      material: EMERALD
+      amount: 1
+    ingridient2:
+      type: item
+      material: LAVA_BUCKET
       amount: 1

@@ -3,6 +3,7 @@ package eu.endermite.wanderingvendors.trades;
 import eu.endermite.wanderingvendors.WanderingVendors;
 import eu.endermite.wanderingvendors.trades.types.CrazyCratesKeyTrade;
 import eu.endermite.wanderingvendors.trades.types.HeadTrade;
+import eu.endermite.wanderingvendors.trades.types.HeadsPlusHeadTrade;
 import eu.endermite.wanderingvendors.trades.types.ItemTrade;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
@@ -34,6 +35,14 @@ public class TradeManager {
             case ("crazycrateskey"):
                 if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("CrazyCrates") != null) {
                     result = CrazyCratesKeyTrade.getKey(configsection, "result");
+                } else {
+                    WanderingVendors.getPlugin().getLogger().severe("CrazyCrates is required for crazycrateskey trade");
+                    return null;
+                }
+                break;
+            case ("headsplus"):
+                if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("HeadsPlus") != null) {
+                    result = HeadsPlusHeadTrade.getHead(configsection, "result");
                 } else {
                     WanderingVendors.getPlugin().getLogger().severe("CrazyCrates is required for crazycrateskey trade");
                     return null;
@@ -73,6 +82,14 @@ public class TradeManager {
                         ing = CrazyCratesKeyTrade.getKey(configsection, "ingridient"+i);
                     } else {
                         WanderingVendors.getPlugin().getLogger().severe("CrazyCrates is required for crazycrateskey trade");
+                        return null;
+                    }
+                    break;
+                case ("headsplus"):
+                    if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("HeadsPlus") != null) {
+                        ing = HeadsPlusHeadTrade.getHead(configsection, "ingridient"+i);
+                    } else {
+                        WanderingVendors.getPlugin().getLogger().severe("HeadsPlus is required for headsplus trade");
                         return null;
                     }
                     break;

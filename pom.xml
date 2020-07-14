@@ -66,6 +66,10 @@
             <id>nexus</id>
             <url>https://nexus.badbones69.com/repository/maven-releases/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -79,6 +83,12 @@
             <groupId>me.badbones69</groupId>
             <artifactId>crazycrates-plugin</artifactId>
             <version>1.10</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Thatsmusic99</groupId>
+            <artifactId>HeadsPlus</artifactId>
+            <version>v6.10.5-SNAPSHOT-1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

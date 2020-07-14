@@ -20,12 +20,12 @@ public class ConfigCache {
 
             try {
                 MerchantRecipe newTrade = TradeManager.createMerchantRecipe(s);
-                merchantTrades.add(newTrade);
                 HashMap<Integer, ItemStack> index = new HashMap<>();
                 index.put(0,newTrade.getResult());
                 index.put(1, newTrade.getIngredients().get(0));
                 index.put(2, newTrade.getIngredients().get(1));
                 items.put(s, index);
+                merchantTrades.add(newTrade);
 
             } catch (NullPointerException e) {
                 WanderingVendors.getPlugin().getLogger().severe("Failed to load trade "+s);

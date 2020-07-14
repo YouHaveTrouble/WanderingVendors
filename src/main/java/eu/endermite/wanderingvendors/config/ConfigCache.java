@@ -14,10 +14,15 @@ public class ConfigCache {
     private Configuration config = WanderingVendors.getPlugin().getConfig();
     private List<MerchantRecipe> merchantTrades = new ArrayList<>();
     private HashMap<String, HashMap<Integer, ItemStack>> items = new HashMap<>();
+    private boolean randomize;
+    private int maxTrades;
 
     public ConfigCache() {
-        for (String s : config.getConfigurationSection("trades").getKeys(false)) {
 
+        randomize = config.getBoolean("options.randomize.enabled");
+        maxTrades = config.getInt("options.randomize.max-trades");
+
+        for (String s : config.getConfigurationSection("trades").getKeys(false)) {
             try {
                 MerchantRecipe newTrade = TradeManager.createMerchantRecipe(s);
                 HashMap<Integer, ItemStack> index = new HashMap<>();
@@ -38,6 +43,8 @@ public class ConfigCache {
         return merchantTrades;
     }
     public HashMap<String, HashMap<Integer, ItemStack>> getItems() {return items;}
+    public boolean isRandomizeEnabled() {return randomize;}
+    public int getMaxTrades() {return maxTrades;}
 
 
 }

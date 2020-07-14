@@ -1,3 +1,9 @@
+options:
+  # Trade randimizer. Disable to have static trades
+  randomize:
+    enabled: true
+    # How many trades each traveling merchant should have
+    max-trades: 2
 trades:
   item_example:
     maxuses: 1

@@ -91,5 +91,10 @@
             <version>v6.10.5-SNAPSHOT-1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.OmerBenGera</groupId>
+            <artifactId>WildToolsAPI</artifactId>
+            <version>b7</version>
+        </dependency>
     </dependencies>
 </project>

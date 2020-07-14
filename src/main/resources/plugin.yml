@@ -6,6 +6,7 @@ authors: [YouHaveTrouble]
 softdepend:
   - CrazyCrates
   - HeadsPlus
+  - WildTools
 description: Make wandering traders useful for once
 commands:
   wanderingvendors:

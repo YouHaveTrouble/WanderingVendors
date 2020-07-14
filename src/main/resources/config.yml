@@ -78,3 +78,17 @@ trades:
       type: item
       material: LAVA_BUCKET
       amount: 1
+  wildtools_example:
+    maxuses: 1
+    result:
+      type: wildtools
+      tool: trench_pickaxe
+      uses: 1
+    ingridient1:
+      type: item
+      material: DIAMOND_PICKAXE
+      amount: 1
+    ingridient2:
+      type: item
+      material: DIRT
+      amount: 1

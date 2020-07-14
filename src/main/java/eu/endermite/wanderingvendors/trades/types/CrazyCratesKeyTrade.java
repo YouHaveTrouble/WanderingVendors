@@ -10,7 +10,7 @@ public class CrazyCratesKeyTrade {
 
     private static final Configuration config = WanderingVendors.getPlugin().getConfig();
 
-    public static ItemStack getKey(String configsection, String type) {
+    public static ItemStack getItem(String configsection, String type) {
 
         String cratename = config.getString("trades." + configsection + "." + type + ".crate");
         int amount = config.getInt("trades." + configsection + "." + type + ".amount");

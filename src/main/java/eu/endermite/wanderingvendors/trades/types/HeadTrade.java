@@ -15,7 +15,7 @@ public class HeadTrade {
 
     private static final Configuration config = WanderingVendors.getPlugin().getConfig();
 
-    public static ItemStack getHead(String configsection, String type) {
+    public static ItemStack getItem(String configsection, String type) {
 
         int amount = config.getInt("trades."+configsection+"."+type+".amount");
 

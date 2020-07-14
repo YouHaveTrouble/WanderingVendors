@@ -1,10 +1,7 @@
 package eu.endermite.wanderingvendors.trades;
 
 import eu.endermite.wanderingvendors.WanderingVendors;
-import eu.endermite.wanderingvendors.trades.types.CrazyCratesKeyTrade;
-import eu.endermite.wanderingvendors.trades.types.HeadTrade;
-import eu.endermite.wanderingvendors.trades.types.HeadsPlusHeadTrade;
-import eu.endermite.wanderingvendors.trades.types.ItemTrade;
+import eu.endermite.wanderingvendors.trades.types.*;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.inventory.ItemStack;
@@ -30,11 +27,11 @@ public class TradeManager {
                 result = ItemTrade.getItem(configsection, "result");
                 break;
             case ("head"):
-                result = HeadTrade.getHead(configsection, "result");
+                result = HeadTrade.getItem(configsection, "result");
                 break;
             case ("crazycrateskey"):
                 if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("CrazyCrates") != null) {
-                    result = CrazyCratesKeyTrade.getKey(configsection, "result");
+                    result = CrazyCratesKeyTrade.getItem(configsection, "result");
                 } else {
                     WanderingVendors.getPlugin().getLogger().severe("CrazyCrates is required for crazycrateskey trade");
                     return null;
@@ -42,9 +39,17 @@ public class TradeManager {
                 break;
             case ("headsplus"):
                 if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("HeadsPlus") != null) {
-                    result = HeadsPlusHeadTrade.getHead(configsection, "result");
+                    result = HeadsPlusHeadTrade.getItem(configsection, "result");
                 } else {
                     WanderingVendors.getPlugin().getLogger().severe("CrazyCrates is required for crazycrateskey trade");
+                    return null;
+                }
+                break;
+            case ("wildtools"):
+                if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("WildTools") != null) {
+                    result = WildToolsTrade.getItem(configsection, "result");
+                } else {
+                    WanderingVendors.getPlugin().getLogger().severe("WildTools is required for wildtools trade");
                     return null;
                 }
                 break;
@@ -75,11 +80,11 @@ public class TradeManager {
                     ing = ItemTrade.getItem(configsection, "ingridient"+i);
                     break;
                 case ("head"):
-                    ing = HeadTrade.getHead(configsection, "ingridient"+i);
+                    ing = HeadTrade.getItem(configsection, "ingridient"+i);
                     break;
                 case ("crazycrateskey"):
                     if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("CrazyCrates") != null) {
-                        ing = CrazyCratesKeyTrade.getKey(configsection, "ingridient"+i);
+                        ing = CrazyCratesKeyTrade.getItem(configsection, "ingridient"+i);
                     } else {
                         WanderingVendors.getPlugin().getLogger().severe("CrazyCrates is required for crazycrateskey trade");
                         return null;
@@ -87,9 +92,17 @@ public class TradeManager {
                     break;
                 case ("headsplus"):
                     if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("HeadsPlus") != null) {
-                        ing = HeadsPlusHeadTrade.getHead(configsection, "ingridient"+i);
+                        ing = HeadsPlusHeadTrade.getItem(configsection, "ingridient"+i);
                     } else {
                         WanderingVendors.getPlugin().getLogger().severe("HeadsPlus is required for headsplus trade");
+                        return null;
+                    }
+                    break;
+                case ("wildtools"):
+                    if (WanderingVendors.getPlugin().getServer().getPluginManager().getPlugin("WildTools") != null) {
+                        ing = WildToolsTrade.getItem(configsection, "ingridient"+i);
+                    } else {
+                        WanderingVendors.getPlugin().getLogger().severe("WildTools is required for wildtools trade");
                         return null;
                     }
                     break;

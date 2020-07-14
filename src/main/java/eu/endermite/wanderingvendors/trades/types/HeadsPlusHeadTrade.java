@@ -9,7 +9,7 @@ public class HeadsPlusHeadTrade {
 
     private static final Configuration config = WanderingVendors.getPlugin().getConfig();
 
-    public static ItemStack getHead(String configsection, String type) {
+    public static ItemStack getItem(String configsection, String type) {
 
         String headname = config.getString("trades." + configsection + "." + type + ".customhead");
         int amount = config.getInt("trades." + configsection + "." + type + ".amount");

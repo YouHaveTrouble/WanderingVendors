@@ -13,11 +13,17 @@ public final class WanderingVendors extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
-        plugin = this;
-        configCache = new ConfigCache();
+
+        reloadConfigData();
         Bukkit.getPluginManager().registerEvents(new WanderingTraderSpawn(), this);
         getCommand("wanderingvendors").setExecutor(new MainCommand());
+    }
+
+    public void reloadConfigData() {
+        saveDefaultConfig();
+        reloadConfig();
+        plugin = this;
+        configCache = new ConfigCache();
     }
 
     public static WanderingVendors getPlugin() {return plugin;}

@@ -1,5 +1,5 @@
 options:
-  # Trade randimizer. Disable to have static trades
+  # Trade randomizer. Disable to have static trades
   randomize:
     enabled: true
     # How many trades each traveling merchant should have

@@ -96,5 +96,6 @@
             <artifactId>WildToolsAPI</artifactId>
             <version>b7</version>
         </dependency>
+
     </dependencies>
 </project>

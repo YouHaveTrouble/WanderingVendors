@@ -1,10 +1,12 @@
 package eu.endermite.wanderingvendors.commands;
 
 import eu.endermite.wanderingvendors.WanderingVendors;
+import eu.endermite.wanderingvendors.gui.TradeCreator;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class MainCommand implements CommandExecutor {
 
@@ -33,7 +35,19 @@ public class MainCommand implements CommandExecutor {
                 WanderingVendors.getPlugin().reloadConfigData();
                 sender.sendMessage(ChatColor.YELLOW + "Config reloaded!");
                 return true;
+            } else if (args[0].equalsIgnoreCase("createtrade")) {
+            if (!sender.hasPermission("wanderingvendors.command.createtrade")) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to do this!");
+                return true;
+            }
+            if (sender instanceof Player) {
+                TradeCreator.openCreator((Player) sender);
             } else {
+                sender.sendMessage(ChatColor.RED + "Can only be used in-game");
+            }
+            return true;
+        }
+            else {
                 sender.sendMessage(ChatColor.RED + "No such subcommand");
             }
         }

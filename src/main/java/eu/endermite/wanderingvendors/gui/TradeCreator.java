@@ -9,11 +9,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -25,39 +25,41 @@ public class TradeCreator implements Listener {
     public void onInventoryClickEvent(InventoryClickEvent e) {
         if (e.getWhoClicked() instanceof Player) {
             Player p = ((Player) e.getWhoClicked()).getPlayer();
-            if (!e.getWhoClicked().getOpenInventory().getTitle().equalsIgnoreCase("Trade Creation")) {
+            if (!e.getWhoClicked().getOpenInventory().getTitle().equalsIgnoreCase("Trade Creation"))
                 return;
-            }
-            if (e.getCurrentItem() == null) {
+
+            if (e.getClickedInventory() == null)
                 return;
-            }
+
+            if (e.getCurrentItem() == null)
+                return;
 
             if (!e.getCurrentItem().hasItemMeta())
                 return;
+
             switch (e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING)) {
                 case "block":
                     e.setCancelled(true);
                     break;
                 case "save":
-                    if (e.getClickedInventory() != null) {
-                        ItemStack ing1 = e.getClickedInventory().getItem(3);
-                        ItemStack ing2 = e.getClickedInventory().getItem(4);
-                        ItemStack res = e.getClickedInventory().getItem(5);
+                    ItemStack ing1 = e.getClickedInventory().getItem(3);
+                    ItemStack ing2 = e.getClickedInventory().getItem(4);
+                    ItemStack res = e.getClickedInventory().getItem(5);
 
-                        if (ing1 == null) {
-                            ing1 = new ItemStack(Material.AIR, 1);
-                        }
-                        if (ing2 == null) {
-                            ing2 = new ItemStack(Material.AIR, 1);
-                        }
-                        if (res == null) {
-                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cResult cannot be empty!"));
-
-                        } else {
-                            p.closeInventory();
-                        }
-
-                        System.out.println(ing1+" "+ing2+" "+res);
+                    if (ing1 == null) {
+                        ing1 = new ItemStack(Material.AIR, 1);
+                    }
+                    if (ing2 == null) {
+                        ing2 = new ItemStack(Material.AIR, 1);
+                    }
+                    if (res == null) {
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cResult cannot be empty!"));
+                    } else {
+                        MerchantRecipe recipe = new MerchantRecipe(res, 1);
+                        recipe.addIngredient(ing1);
+                        recipe.addIngredient(ing2);
+                        WanderingVendors.getConfigCache().addTrade(recipe);
+                        p.closeInventory();
                     }
                     e.setCancelled(true);
                     break;
@@ -71,7 +73,7 @@ public class TradeCreator implements Listener {
         }
     }
 
-    public static void openCreator(Player player) {
+    public static void openGui(Player player) {
         Inventory inv = Bukkit.createInventory(null, InventoryType.DROPPER, "Trade Creation");
 
         ItemStack block = new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 1);
@@ -98,7 +100,6 @@ public class TradeCreator implements Listener {
         cancelmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "cancel");
         cancel.setItemMeta(cancelmeta);
 
-
         inv.setItem(0, block);
         inv.setItem(1, instructioning);
         inv.setItem(2, block);
@@ -107,7 +108,6 @@ public class TradeCreator implements Listener {
         inv.setItem(8, save);
 
         player.openInventory(inv);
-
     }
 
 }

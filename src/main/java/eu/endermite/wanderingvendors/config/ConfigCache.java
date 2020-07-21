@@ -45,6 +45,16 @@ public class ConfigCache {
     public HashMap<String, HashMap<Integer, ItemStack>> getItems() {return items;}
     public boolean isRandomizeEnabled() {return randomize;}
     public int getMaxTrades() {return maxTrades;}
+    public boolean addTrade(MerchantRecipe merchantrecipe) {
+        try {
+            merchantTrades.add(merchantrecipe);
+            return true;
+        } catch (NullPointerException e) {
+            WanderingVendors.getPlugin().getLogger().severe("Failed to add trade "+merchantrecipe.toString());
+            return false;
+        }
+
+    }
 
 
 }

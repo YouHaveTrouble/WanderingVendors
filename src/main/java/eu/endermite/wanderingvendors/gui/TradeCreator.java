@@ -24,7 +24,6 @@ import java.util.List;
 public class TradeCreator implements Listener {
 
     private static int tradeuses = 1;
-    private static int expreward = 1;
 
     private static final NamespacedKey key = new NamespacedKey(WanderingVendors.getPlugin(), "guiitem");
 
@@ -43,6 +42,10 @@ public class TradeCreator implements Listener {
 
             if (!e.getCurrentItem().hasItemMeta())
                 return;
+
+            if (e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING) == null) {
+                return;
+            }
 
             switch (e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING)) {
                 case "block":
@@ -75,7 +78,14 @@ public class TradeCreator implements Listener {
                         MerchantRecipe recipe = new MerchantRecipe(res, tradeuses);
                         recipe.addIngredient(ing1);
                         recipe.addIngredient(ing2);
-                        WanderingVendors.getConfigCache().addTrade(recipe);
+
+                        try {
+                            int id = e.getClickedInventory().getItem(1).getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
+                            WanderingVendors.getConfigCache().editTrade(id, recipe);
+                        } catch (NullPointerException e1) {
+                            WanderingVendors.getConfigCache().addTrade(recipe);
+                        }
+
                         p.closeInventory();
                     }
                     e.setCancelled(true);
@@ -130,9 +140,52 @@ public class TradeCreator implements Listener {
         cancelmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "cancel");
         cancel.setItemMeta(cancelmeta);
 
-        inv.setItem(0, getUsesDisplay(1));
+        inv.setItem(0, getUsesDisplay(tradeuses));
         inv.setItem(1, instructioning);
         inv.setItem(2, block);
+        inv.setItem(6, cancel);
+        inv.setItem(7, block);
+        inv.setItem(8, save);
+
+        player.openInventory(inv);
+    }
+
+    public void openGui(Player player, Integer recipeID) {
+        MerchantRecipe recipe = WanderingVendors.getConfigCache().getMerchantTrades().get(recipeID);
+        this.tradeuses = recipe.getMaxUses();
+        Inventory inv = Bukkit.createInventory(null, InventoryType.DROPPER, "Trade Creation");
+
+        ItemStack block = new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 1);
+        ItemMeta blockmeta = block.getItemMeta();
+        blockmeta.setDisplayName(" ");
+        blockmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "block");
+        block.setItemMeta(blockmeta);
+
+        ItemStack instructioning = new ItemStack(Material.PAPER, 1);
+        ItemMeta instructionmeta = instructioning.getItemMeta();
+        instructionmeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&lInfo"));
+        instructionmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "block");
+        instructionmeta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, recipeID);
+        instructioning.setItemMeta(instructionmeta);
+
+        ItemStack save = new ItemStack(Material.WRITABLE_BOOK, 1);
+        ItemMeta savemeta = save.getItemMeta();
+        savemeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lSave Trade"));
+        savemeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "save");
+        save.setItemMeta(savemeta);
+
+        ItemStack cancel = new ItemStack(Material.BARRIER, 1);
+        ItemMeta cancelmeta = cancel.getItemMeta();
+        cancelmeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c&lCancel"));
+        cancelmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "cancel");
+        cancel.setItemMeta(cancelmeta);
+
+        inv.setItem(0, getUsesDisplay(tradeuses));
+        inv.setItem(1, instructioning);
+        inv.setItem(2, block);
+        inv.setItem(3, recipe.getIngredients().get(0));
+        inv.setItem(4, recipe.getIngredients().get(1));
+        inv.setItem(5, recipe.getResult());
         inv.setItem(6, cancel);
         inv.setItem(7, block);
         inv.setItem(8, save);

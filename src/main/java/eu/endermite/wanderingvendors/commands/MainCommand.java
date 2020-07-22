@@ -42,12 +42,24 @@ public class MainCommand implements CommandExecutor {
                 return true;
             }
             if (sender instanceof Player) {
-                TradeCreator.openCreator((Player) sender);
+                TradeCreator creator = new TradeCreator();
+                creator.openGui((Player) sender);
             } else {
                 sender.sendMessage(ChatColor.RED + "Can only be used in-game");
             }
             return true;
-        }
+            } else if (args[0].equalsIgnoreCase("trades")) {
+                if (!sender.hasPermission("wanderingvendors.command.trades")) {
+                    sender.sendMessage(ChatColor.RED + "You don't have permission to do this!");
+                    return true;
+                }
+                if (sender instanceof Player) {
+                    TradeList.openGui((Player) sender, 0);
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Can only be used in-game");
+                }
+                return true;
+            }
             else {
                 sender.sendMessage(ChatColor.RED + "No such subcommand");
             }

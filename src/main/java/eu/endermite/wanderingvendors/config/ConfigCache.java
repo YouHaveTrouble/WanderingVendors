@@ -53,7 +53,9 @@ public class ConfigCache {
             WanderingVendors.getPlugin().getLogger().severe("Failed to add trade "+merchantrecipe.toString());
             return false;
         }
-
+    }
+    public void editTrade(int id, MerchantRecipe newRecipe) {
+        merchantTrades.set(id, newRecipe);
     }
 
 

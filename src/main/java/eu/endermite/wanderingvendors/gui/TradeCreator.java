@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -17,7 +18,13 @@ import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TradeCreator implements Listener {
+
+    private static int tradeuses = 1;
+    private static int expreward = 1;
 
     private static final NamespacedKey key = new NamespacedKey(WanderingVendors.getPlugin(), "guiitem");
 
@@ -41,6 +48,16 @@ public class TradeCreator implements Listener {
                 case "block":
                     e.setCancelled(true);
                     break;
+                case "tradeuses":
+                    if (e.getAction().equals(InventoryAction.PICKUP_ALL) && tradeuses < 64) {
+                        this.tradeuses++;
+                        e.getClickedInventory().setItem(e.getSlot(), getUsesDisplay(tradeuses));
+                    } else if (e.getAction().equals(InventoryAction.PICKUP_HALF) && tradeuses > 1) {
+                        this.tradeuses = tradeuses-1;
+                        e.getClickedInventory().setItem(e.getSlot(), getUsesDisplay(tradeuses));
+                    }
+                    e.setCancelled(true);
+                    break;
                 case "save":
                     ItemStack ing1 = e.getClickedInventory().getItem(3);
                     ItemStack ing2 = e.getClickedInventory().getItem(4);
@@ -55,7 +72,7 @@ public class TradeCreator implements Listener {
                     if (res == null) {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cResult cannot be empty!"));
                     } else {
-                        MerchantRecipe recipe = new MerchantRecipe(res, 1);
+                        MerchantRecipe recipe = new MerchantRecipe(res, tradeuses);
                         recipe.addIngredient(ing1);
                         recipe.addIngredient(ing2);
                         WanderingVendors.getConfigCache().addTrade(recipe);
@@ -65,7 +82,19 @@ public class TradeCreator implements Listener {
                     break;
                 case "cancel":
                     e.setCancelled(true);
+                    ItemStack cing1 = e.getClickedInventory().getItem(3);
+                    ItemStack cing2 = e.getClickedInventory().getItem(4);
+                    ItemStack cres = e.getClickedInventory().getItem(5);
                     p.closeInventory();
+                    if (cing1 != null) {
+                        p.getInventory().addItem(cing1);
+                    }
+                    if (cing2 != null) {
+                        p.getInventory().addItem(cing2);
+                    }
+                    if (cres != null) {
+                        p.getInventory().addItem(cres);
+                    }
                     break;
                 default:
                     break;
@@ -73,7 +102,8 @@ public class TradeCreator implements Listener {
         }
     }
 
-    public static void openGui(Player player) {
+    public void openGui(Player player) {
+        this.tradeuses = 1;
         Inventory inv = Bukkit.createInventory(null, InventoryType.DROPPER, "Trade Creation");
 
         ItemStack block = new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 1);
@@ -84,7 +114,7 @@ public class TradeCreator implements Listener {
 
         ItemStack instructioning = new ItemStack(Material.PAPER, 1);
         ItemMeta instructionmeta = instructioning.getItemMeta();
-        instructionmeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&lInstructions"));
+        instructionmeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&lInfo"));
         instructionmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "block");
         instructioning.setItemMeta(instructionmeta);
 
@@ -100,7 +130,7 @@ public class TradeCreator implements Listener {
         cancelmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "cancel");
         cancel.setItemMeta(cancelmeta);
 
-        inv.setItem(0, block);
+        inv.setItem(0, getUsesDisplay(1));
         inv.setItem(1, instructioning);
         inv.setItem(2, block);
         inv.setItem(6, cancel);
@@ -110,4 +140,17 @@ public class TradeCreator implements Listener {
         player.openInventory(inv);
     }
 
+    public static ItemStack getUsesDisplay(int amount) {
+        ItemStack tradeamount = new ItemStack(Material.STONE_BUTTON, amount);
+        ItemMeta tradeamountmeta = tradeamount.getItemMeta();
+        tradeamountmeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&lTrade uses"));
+        tradeamountmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "tradeuses");
+        List<String> tamountlore = new ArrayList<String>();
+        tamountlore.add("Uses: "+amount);
+        tamountlore.add("LMB - add 1");
+        tamountlore.add("RMB - remove 1");
+        tradeamountmeta.setLore(tamountlore);
+        tradeamount.setItemMeta(tradeamountmeta);
+        return tradeamount;
+    }
 }

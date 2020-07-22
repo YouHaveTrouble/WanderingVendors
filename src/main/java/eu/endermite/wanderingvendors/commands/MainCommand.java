@@ -2,6 +2,7 @@ package eu.endermite.wanderingvendors.commands;
 
 import eu.endermite.wanderingvendors.WanderingVendors;
 import eu.endermite.wanderingvendors.gui.TradeCreator;
+import eu.endermite.wanderingvendors.gui.TradeList;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

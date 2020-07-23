@@ -82,10 +82,10 @@ public class TradeCreator implements Listener {
                         try {
                             int id = e.getClickedInventory().getItem(1).getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
                             WanderingVendors.getConfigCache().editTrade(id, recipe);
-                        } catch (NullPointerException e1) {
+                        } catch (NullPointerException | IllegalArgumentException e1) {
                             WanderingVendors.getConfigCache().addTrade(recipe);
                         }
-
+                        RefreshGuis.refresh();
                         p.closeInventory();
                     }
                     e.setCancelled(true);
@@ -184,7 +184,9 @@ public class TradeCreator implements Listener {
         inv.setItem(1, instructioning);
         inv.setItem(2, block);
         inv.setItem(3, recipe.getIngredients().get(0));
-        inv.setItem(4, recipe.getIngredients().get(1));
+        if (recipe.getIngredients().size() > 1) {
+            inv.setItem(4, recipe.getIngredients().get(1));
+        }
         inv.setItem(5, recipe.getResult());
         inv.setItem(6, cancel);
         inv.setItem(7, block);

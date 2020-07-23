@@ -54,7 +54,8 @@ public class MainCommand implements CommandExecutor {
                     return true;
                 }
                 if (sender instanceof Player) {
-                    TradeList.openGui((Player) sender, 0);
+                    TradeList list = new TradeList();
+                    list.openGui((Player) sender, 0);
                 } else {
                     sender.sendMessage(ChatColor.RED + "Can only be used in-game");
                 }

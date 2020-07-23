@@ -6,7 +6,7 @@ import org.bukkit.inventory.InventoryView;
 
 public class RefreshGuis {
 
-    public void refresh() {
+    public static void refresh() {
         for (Player p : Bukkit.getOnlinePlayers()) {
             try {
                 InventoryView inv = p.getOpenInventory();
@@ -14,7 +14,12 @@ public class RefreshGuis {
                 continue;
             }
             if (p.getOpenInventory().getTitle().equals("Trade List")) {
-                p.closeInventory();
+                try {
+                    int page = p.getOpenInventory().getItem(49).getAmount();
+                    page = page-1;
+                    TradeList tradelist = new TradeList();
+                    tradelist.openGui(p, page);
+                } catch (Exception ignored) {}
             }
 
 

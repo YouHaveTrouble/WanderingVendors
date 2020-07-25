@@ -153,9 +153,9 @@ public class TradeCreator implements Listener {
         blockmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "block");
         block.setItemMeta(blockmeta);
 
-        ItemStack instructioning = new ItemStack(Material.PAPER, 1);
+        ItemStack instructioning = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE, 1);
         ItemMeta instructionmeta = instructioning.getItemMeta();
-        instructionmeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&lInfo"));
+        instructionmeta.setDisplayName(" ");
         instructionmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "block");
         instructioning.setItemMeta(instructionmeta);
 

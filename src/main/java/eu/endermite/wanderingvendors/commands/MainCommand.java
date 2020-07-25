@@ -8,7 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +59,8 @@ public class MainCommand implements TabExecutor {
             else {
                 sender.sendMessage(ChatColor.RED + "No such subcommand");
             }
+        } else {
+            sender.sendMessage(ChatColor.YELLOW + "WanderingVendors by YouHaveTrouble");
         }
         return true;
     }

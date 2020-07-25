@@ -21,14 +21,7 @@ public class MainCommand implements CommandExecutor {
         }
 
         if (args.length > 0) {
-            if (args[0].equalsIgnoreCase("give")) {
-                if (!sender.hasPermission("wanderingvendors.command.reload")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission to do this!");
-                    return true;
-                }
-                GiveItem.giveItem(sender, args);
-                return true;
-            } else if (args[0].equalsIgnoreCase("reload")) {
+            if (args[0].equalsIgnoreCase("reload")) {
                 if (!sender.hasPermission("wanderingvendors.command.reload")) {
                     sender.sendMessage(ChatColor.RED + "You don't have permission to do this!");
                     return true;

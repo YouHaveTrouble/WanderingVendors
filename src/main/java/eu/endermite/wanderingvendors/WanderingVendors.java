@@ -17,13 +17,12 @@ public final class WanderingVendors extends JavaPlugin {
     @Override
     public void onEnable() {
 
-
         reloadConfigData();
-        CreatorTradesConfig.setupCreatorTrades();
         Bukkit.getPluginManager().registerEvents(new WanderingTraderSpawn(), this);
         Bukkit.getPluginManager().registerEvents(new TradeCreator(), this);
         Bukkit.getPluginManager().registerEvents(new TradeList(), this);
         getCommand("wanderingvendors").setExecutor(new MainCommand());
+        getCommand("wanderingvendors").setTabCompleter(new MainCommand());
     }
 
     public void reloadConfigData() {
@@ -31,6 +30,7 @@ public final class WanderingVendors extends JavaPlugin {
         reloadConfig();
         plugin = this;
         configCache = new ConfigCache();
+        CreatorTradesConfig.setupCreatorTrades();
     }
 
     public static WanderingVendors getPlugin() {return plugin;}

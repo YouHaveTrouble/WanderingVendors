@@ -78,10 +78,6 @@ public class CreatorTradesConfig {
 
             }
         } catch (NullPointerException ignored) {}
-
-
-
-
     }
 
 }

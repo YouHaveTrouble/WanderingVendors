@@ -49,10 +49,6 @@ public class WanderingTraderSpawn implements Listener {
                 }
                 trader.setRecipes(reclist);
             }
-
-
-
-
         }
     }
 

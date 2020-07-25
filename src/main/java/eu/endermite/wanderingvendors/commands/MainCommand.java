@@ -5,11 +5,14 @@ import eu.endermite.wanderingvendors.gui.TradeCreator;
 import eu.endermite.wanderingvendors.gui.TradeList;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-public class MainCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainCommand implements TabExecutor {
 
 
     @Override
@@ -58,8 +61,27 @@ public class MainCommand implements CommandExecutor {
                 sender.sendMessage(ChatColor.RED + "No such subcommand");
             }
         }
-
-
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+
+        List<String> all =  new ArrayList<>();
+        all.add("reload");
+        all.add("createtrade");
+        all.add("trades");
+
+        if (args.length == 1) {
+            List<String> result = new ArrayList<>();
+            for (String cmd : all) {
+                if (cmd.startsWith(args[0])) {
+                    result.add(cmd);
+                }
+            }
+            return result;
+        }
+
+        return null;
     }
 }

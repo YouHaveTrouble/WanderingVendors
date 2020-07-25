@@ -12,3 +12,13 @@ commands:
   wanderingvendors:
     usage: /wanderingvendors
     permission: wanderingvendors.command
+permissions:
+  wanderingwendors.command.reload:
+    default: OP
+    description: Allows usage of reload command
+  wanderingvendors.command.createtrade:
+    default: OP
+    description: Allows creating new trades
+  wanderingvendors.comand.trades:
+    default: OP
+    description: Allows listing and editing trades

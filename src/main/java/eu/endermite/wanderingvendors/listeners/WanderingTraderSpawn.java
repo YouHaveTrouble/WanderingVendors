@@ -18,10 +18,6 @@ public class WanderingTraderSpawn implements Listener {
         if(event.getEntity() instanceof WanderingTrader) {
             WanderingTrader trader = (WanderingTrader) event.getEntity();
 
-            if (WanderingVendors.getConfigCache().getMerchantTrades().isEmpty()) {
-                return;
-            }
-
             if (WanderingVendors.getConfigCache().isRandomizeEnabled()) {
                 int maxTrades = WanderingVendors.getConfigCache().getMaxTrades();
 

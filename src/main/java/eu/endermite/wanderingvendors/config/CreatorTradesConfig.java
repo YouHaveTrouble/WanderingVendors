@@ -17,8 +17,12 @@ public class CreatorTradesConfig {
 
         creatorConfig.set("recipes."+id+".uses", recipe.getMaxUses());
         creatorConfig.set("recipes."+id+".result", recipe.getResult());
-        creatorConfig.set("recipes."+id+".ingridient1", recipe.getIngredients().get(0));
-        creatorConfig.set("recipes."+id+".ingridient2", recipe.getIngredients().get(1));
+        if (recipe.getIngredients().get(0) != null) {
+            creatorConfig.set("recipes."+id+".ingridient1", recipe.getIngredients().get(0));
+        }
+        if (recipe.getIngredients().size() == 2 && recipe.getIngredients().get(1) != null) {
+            creatorConfig.set("recipes."+id+".ingridient2", recipe.getIngredients().get(1));
+        }
 
         try {
             File creatorConfigFile = new File(plugin.getDataFolder(), "creatortrades.yml");
@@ -44,12 +48,16 @@ public class CreatorTradesConfig {
 
         Integer uses = creatorConfig.getInt("recipes."+id+".uses");
         ItemStack result = creatorConfig.getItemStack("recipes."+id+".result");
-        ItemStack ingridient1 = creatorConfig.getItemStack("recipes."+id+".ingridient1");
-        ItemStack ingridient2 = creatorConfig.getItemStack("recipes."+id+".ingridient2");
-
         MerchantRecipe recipe = new MerchantRecipe(result, uses);
-        recipe.addIngredient(ingridient1);
-        recipe.addIngredient(ingridient2);
+
+        if (creatorConfig.getItemStack("recipes."+id+".ingridient1") != null) {
+            ItemStack ingridient1 = creatorConfig.getItemStack("recipes."+id+".ingridient1");
+            recipe.addIngredient(ingridient1);
+        }
+        if (creatorConfig.getItemStack("recipes."+id+".ingridient2") != null) {
+            ItemStack ingridient2 = creatorConfig.getItemStack("recipes."+id+".ingridient2");
+            recipe.addIngredient(ingridient2);
+        }
 
         return recipe;
 

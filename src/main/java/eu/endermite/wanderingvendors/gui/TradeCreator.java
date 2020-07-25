@@ -82,15 +82,7 @@ public class TradeCreator implements Listener {
                     ItemStack ing2 = e.getClickedInventory().getItem(4);
                     ItemStack res = e.getClickedInventory().getItem(5);
 
-                    ItemStack air = new ItemStack(Material.AIR, 1);
-
-                    if (ing1 == null) {
-                        ing1 = air;
-                    }
-                    if (ing2 == null) {
-                        ing2 = air;
-                    }
-                    if (ing1 == air && ing2 == air) {
+                    if (ing1 == null && ing2 == null) {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cTrade needs to have at least 1 ingridient!"));
                         e.setCancelled(true);
                         break;
@@ -101,8 +93,12 @@ public class TradeCreator implements Listener {
                         break;
                     } else {
                         MerchantRecipe recipe = new MerchantRecipe(res, tradeuses);
-                        recipe.addIngredient(ing1);
-                        recipe.addIngredient(ing2);
+                        if (ing1 != null) {
+                            recipe.addIngredient(ing1);
+                        }
+                        if (ing2 != null) {
+                            recipe.addIngredient(ing2);
+                        }
                         try {
                             String id = e.getClickedInventory().getItem(1).getItemMeta().getPersistentDataContainer().get(skey, PersistentDataType.STRING);
                             if (id == null) {
@@ -123,19 +119,7 @@ public class TradeCreator implements Listener {
                     break;
                 case "cancel":
                     e.setCancelled(true);
-                    ItemStack cing1 = e.getClickedInventory().getItem(3);
-                    ItemStack cing2 = e.getClickedInventory().getItem(4);
-                    ItemStack cres = e.getClickedInventory().getItem(5);
                     p.closeInventory();
-                    if (cing1 != null) {
-                        p.getInventory().addItem(cing1);
-                    }
-                    if (cing2 != null) {
-                        p.getInventory().addItem(cing2);
-                    }
-                    if (cres != null) {
-                        p.getInventory().addItem(cres);
-                    }
                     break;
                 default:
                     break;

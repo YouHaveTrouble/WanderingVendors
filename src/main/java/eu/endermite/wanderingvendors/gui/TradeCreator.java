@@ -1,6 +1,7 @@
 package eu.endermite.wanderingvendors.gui;
 
 import eu.endermite.wanderingvendors.WanderingVendors;
+import eu.endermite.wanderingvendors.config.CreatorTradesConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,12 +21,14 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TradeCreator implements Listener {
 
     private static int tradeuses = 1;
 
     private static final NamespacedKey key = new NamespacedKey(WanderingVendors.getPlugin(), "guiitem");
+    private static final NamespacedKey skey = new NamespacedKey(WanderingVendors.getPlugin(), "tradeid");
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClickEvent(InventoryClickEvent e) {
@@ -61,29 +64,57 @@ public class TradeCreator implements Listener {
                     }
                     e.setCancelled(true);
                     break;
+                case "delete":
+                    String delid = e.getClickedInventory().getItem(1).getItemMeta().getPersistentDataContainer().get(skey, PersistentDataType.STRING);
+                    if (delid != null) {
+                        try {
+                            WanderingVendors.getConfigCache().deleteTrade(delid);
+                        } catch (NullPointerException ignored) {}
+                        try {
+                            CreatorTradesConfig.deleteTrade(delid);
+                        } catch (NullPointerException ignored) {}
+                    }
+                    e.setCancelled(true);
+                    p.closeInventory();
+                    break;
                 case "save":
                     ItemStack ing1 = e.getClickedInventory().getItem(3);
                     ItemStack ing2 = e.getClickedInventory().getItem(4);
                     ItemStack res = e.getClickedInventory().getItem(5);
 
+                    ItemStack air = new ItemStack(Material.AIR, 1);
+
                     if (ing1 == null) {
-                        ing1 = new ItemStack(Material.AIR, 1);
+                        ing1 = air;
                     }
                     if (ing2 == null) {
-                        ing2 = new ItemStack(Material.AIR, 1);
+                        ing2 = air;
+                    }
+                    if (ing1 == air && ing2 == air) {
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cTrade needs to have at least 1 ingridient!"));
+                        e.setCancelled(true);
+                        break;
                     }
                     if (res == null) {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cResult cannot be empty!"));
+                        e.setCancelled(true);
+                        break;
                     } else {
                         MerchantRecipe recipe = new MerchantRecipe(res, tradeuses);
                         recipe.addIngredient(ing1);
                         recipe.addIngredient(ing2);
-
                         try {
-                            int id = e.getClickedInventory().getItem(1).getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
-                            WanderingVendors.getConfigCache().editTrade(id, recipe);
+                            String id = e.getClickedInventory().getItem(1).getItemMeta().getPersistentDataContainer().get(skey, PersistentDataType.STRING);
+                            if (id == null) {
+                                UUID uuid = UUID.randomUUID();
+                                WanderingVendors.getConfigCache().addTrade(uuid.toString(), recipe);
+                                CreatorTradesConfig.saveTrade(uuid.toString(), recipe);
+                            } else {
+                                WanderingVendors.getConfigCache().editTrade(id, recipe);
+                                CreatorTradesConfig.saveTrade(id, recipe);
+                            }
                         } catch (NullPointerException | IllegalArgumentException e1) {
-                            WanderingVendors.getConfigCache().addTrade(recipe);
+                            e1.printStackTrace();
                         }
                         RefreshGuis.refresh();
                         p.closeInventory();
@@ -150,7 +181,7 @@ public class TradeCreator implements Listener {
         player.openInventory(inv);
     }
 
-    public void openGui(Player player, Integer recipeID) {
+    public void openGui(Player player, String recipeID) {
         MerchantRecipe recipe = WanderingVendors.getConfigCache().getMerchantTrades().get(recipeID);
         this.tradeuses = recipe.getMaxUses();
         Inventory inv = Bukkit.createInventory(null, InventoryType.DROPPER, "Trade Creation");
@@ -161,12 +192,18 @@ public class TradeCreator implements Listener {
         blockmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "block");
         block.setItemMeta(blockmeta);
 
-        ItemStack instructioning = new ItemStack(Material.PAPER, 1);
+        ItemStack instructioning = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE, 1);
         ItemMeta instructionmeta = instructioning.getItemMeta();
-        instructionmeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&lInfo"));
+        instructionmeta.setDisplayName(" ");
         instructionmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "block");
-        instructionmeta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, recipeID);
+        instructionmeta.getPersistentDataContainer().set(skey, PersistentDataType.STRING, recipeID);
         instructioning.setItemMeta(instructionmeta);
+
+        ItemStack delete = new ItemStack(Material.LAVA_BUCKET, 1);
+        ItemMeta deletemeta = delete.getItemMeta();
+        deletemeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lDelete Trade"));
+        deletemeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "delete");
+        delete.setItemMeta(deletemeta);
 
         ItemStack save = new ItemStack(Material.WRITABLE_BOOK, 1);
         ItemMeta savemeta = save.getItemMeta();
@@ -182,7 +219,7 @@ public class TradeCreator implements Listener {
 
         inv.setItem(0, getUsesDisplay(tradeuses));
         inv.setItem(1, instructioning);
-        inv.setItem(2, block);
+        inv.setItem(2, delete);
         inv.setItem(3, recipe.getIngredients().get(0));
         if (recipe.getIngredients().size() > 1) {
             inv.setItem(4, recipe.getIngredients().get(1));

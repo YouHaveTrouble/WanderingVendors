@@ -16,6 +16,9 @@ import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TradeList implements Listener {
 
     private static final NamespacedKey key = new NamespacedKey(WanderingVendors.getPlugin(), "guiitem");
@@ -39,8 +42,8 @@ public class TradeList implements Listener {
             if (!e.getCurrentItem().hasItemMeta())
                 return;
 
-            if (e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(keyid, PersistentDataType.INTEGER) != null) {
-                int id = e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(keyid, PersistentDataType.INTEGER);
+            if (e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(keyid, PersistentDataType.STRING) != null) {
+                String id = e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(keyid, PersistentDataType.STRING);
                 TradeCreator creator = new TradeCreator();
                 creator.openGui(p, id);
             }
@@ -61,6 +64,7 @@ public class TradeList implements Listener {
     }
 
     public void openGui(Player player, int page) {
+
         Inventory inv = Bukkit.createInventory(null, 54, "Trade List");
 
         int id = 44 * page;
@@ -111,24 +115,43 @@ public class TradeList implements Listener {
         }
 
 
-
         if (WanderingVendors.getConfigCache().getMerchantTrades().size() > 44*pagenum) {
             inv.setItem(50, next);
         } else {
             inv.setItem(50, blue);
         }
 
-        for (int i = 0; i < 45; i++) {
-            MerchantRecipe recipe = WanderingVendors.getConfigCache().getMerchantTrades().get(id);
-            ItemStack item = recipe.getResult();
-            ItemMeta itemmeta = item.getItemMeta();
-            itemmeta.getPersistentDataContainer().set(keyid, PersistentDataType.INTEGER, id++);
-            item.setItemMeta(itemmeta);
-            inv.setItem(i, recipe.getResult());
-            if (id >= WanderingVendors.getConfigCache().getMerchantTrades().size()) {
-                break;
+        HashMap<String, MerchantRecipe> cache = new HashMap<>(WanderingVendors.getConfigCache().getMerchantTrades());
+
+        if (page != 0) {
+            int iter = 0;
+            for (Map.Entry<String, MerchantRecipe> entry : cache.entrySet()) {
+
+                if (iter < id || iter >= 45) {
+                    break;
+                }
+                inv.setItem(iter, entry.getValue().getResult());
+                iter++;
+            }
+        } else {
+            int iter = 0;
+            for (Map.Entry<String, MerchantRecipe> entry : cache.entrySet()) {
+
+                if (iter >= 45) {
+                    break;
+                }
+                ItemStack item = entry.getValue().getResult().clone();
+                ItemMeta meta = item.getItemMeta();
+                meta.getPersistentDataContainer().set(keyid, PersistentDataType.STRING, entry.getKey());
+                item.setItemMeta(meta);
+                inv.setItem(iter, item);
+                iter++;
             }
         }
+
+
+
+
         player.openInventory(inv);
 
     }

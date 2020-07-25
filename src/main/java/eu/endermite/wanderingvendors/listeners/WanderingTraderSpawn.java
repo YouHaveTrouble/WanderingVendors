@@ -21,7 +21,7 @@ public class WanderingTraderSpawn implements Listener {
             if (WanderingVendors.getConfigCache().isRandomizeEnabled()) {
                 int maxTrades = WanderingVendors.getConfigCache().getMaxTrades();
 
-                List<MerchantRecipe> cache = new ArrayList<>(WanderingVendors.getConfigCache().getMerchantTrades());
+                List<MerchantRecipe> cache = new ArrayList(WanderingVendors.getConfigCache().getMerchantTrades().values());
                 List<MerchantRecipe> randomized = new ArrayList<>();
                 Random random = new Random();
 
@@ -29,6 +29,7 @@ public class WanderingTraderSpawn implements Listener {
                     try {
                         int r = random.nextInt(cache.size());
                         randomized.add(cache.get(r));
+
                         cache.remove(r);
 
                     } catch (Exception e ) {
@@ -37,7 +38,16 @@ public class WanderingTraderSpawn implements Listener {
                 }
                 trader.setRecipes(randomized);
             } else {
-                trader.setRecipes(WanderingVendors.getConfigCache().getMerchantTrades());
+
+                List<MerchantRecipe> reclist = new ArrayList<>();
+
+                for (MerchantRecipe rec : WanderingVendors.getConfigCache().getMerchantTrades().values()) {
+                    reclist.add(rec);
+                }
+                if (reclist.isEmpty()) {
+                    return;
+                }
+                trader.setRecipes(reclist);
             }
 
 

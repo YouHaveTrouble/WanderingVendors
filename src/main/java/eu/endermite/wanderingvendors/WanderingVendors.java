@@ -2,6 +2,7 @@ package eu.endermite.wanderingvendors;
 
 import eu.endermite.wanderingvendors.commands.MainCommand;
 import eu.endermite.wanderingvendors.config.ConfigCache;
+import eu.endermite.wanderingvendors.config.CreatorTradesConfig;
 import eu.endermite.wanderingvendors.gui.TradeCreator;
 import eu.endermite.wanderingvendors.gui.TradeList;
 import eu.endermite.wanderingvendors.listeners.WanderingTraderSpawn;
@@ -16,7 +17,9 @@ public final class WanderingVendors extends JavaPlugin {
     @Override
     public void onEnable() {
 
+
         reloadConfigData();
+        CreatorTradesConfig.setupCreatorTrades();
         Bukkit.getPluginManager().registerEvents(new WanderingTraderSpawn(), this);
         Bukkit.getPluginManager().registerEvents(new TradeCreator(), this);
         Bukkit.getPluginManager().registerEvents(new TradeList(), this);

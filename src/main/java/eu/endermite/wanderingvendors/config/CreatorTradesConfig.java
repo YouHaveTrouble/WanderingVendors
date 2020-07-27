@@ -35,7 +35,6 @@ public class CreatorTradesConfig {
     public static void deleteTrade(String id) {
 
         creatorConfig.set("recipes."+id, null);
-
         try {
             File creatorConfigFile = new File(plugin.getDataFolder(), "creatortrades.yml");
             creatorConfig.save(creatorConfigFile);
@@ -58,9 +57,7 @@ public class CreatorTradesConfig {
             ItemStack ingridient2 = creatorConfig.getItemStack("recipes."+id+".ingridient2");
             recipe.addIngredient(ingridient2);
         }
-
         return recipe;
-
     }
 
     public static void setupCreatorTrades() {
@@ -80,10 +77,8 @@ public class CreatorTradesConfig {
 
         try {
             for (String id : creatorConfig.getConfigurationSection("recipes").getKeys(false)) {
-
                 MerchantRecipe trade = loadTrade(id);
                 WanderingVendors.getConfigCache().addTrade(id, trade);
-
             }
         } catch (NullPointerException ignored) {}
     }

@@ -11,6 +11,7 @@ import org.bukkit.entity.WanderingTrader;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.persistence.PersistentDataType;
+
 import java.io.File;
 import java.util.*;
 
@@ -22,7 +23,7 @@ public class NPCManager {
     private static final WanderingVendors plugin = WanderingVendors.getPlugin();
     private static FileConfiguration npcConfig;
 
-    NPCManager() {
+    public NPCManager() {
         File npcConfigFile = new File(plugin.getDataFolder(), "npc.yml");
         npcConfig = new YamlConfiguration();
 
@@ -36,11 +37,16 @@ public class NPCManager {
             e.printStackTrace();
         }
 
-            for (String id : npcConfig.getConfigurationSection("npc").getKeys(false)) {
-                try {
-                    npcList.put(id, loadNpc(id));
-                } catch (NullPointerException ignored) {}
+        if (npcConfig.getConfigurationSection("npc").getKeys(false) == null) {
+            return;
+        }
+
+        for (String id : npcConfig.getConfigurationSection("npc").getKeys(false)) {
+            try {
+                npcList.put(id, loadNpc(id));
+            } catch (NullPointerException ignored) {
             }
+        }
 
     }
 
@@ -57,30 +63,30 @@ public class NPCManager {
         try {
             WVNPC npc = npcList.get(id);
             if (npc.hasCustomName()) {
-                npcConfig.set("npc."+id+".customname", npc.getCustomName());
+                npcConfig.set("npc." + id + ".customname", npc.getCustomName());
             } else {
-                npcConfig.set("npc."+id+".customname", null);
+                npcConfig.set("npc." + id + ".customname", null);
             }
-            npcConfig.set("npc."+id+".location", npc.getLocation());
+            npcConfig.set("npc." + id + ".location", npc.getLocation());
 
             if (!npc.getTradelist().isEmpty()) {
                 for (Map.Entry<String, MerchantRecipe> set : npc.getTradelist().entrySet()) {
-                    npcConfig.set("npc."+id+".trades."+set.getKey()+".uses", set.getValue().getMaxUses());
-                    npcConfig.set("npc."+id+".trades."+set.getKey()+".result", set.getValue().getResult());
+                    npcConfig.set("npc." + id + ".trades." + set.getKey() + ".uses", set.getValue().getMaxUses());
+                    npcConfig.set("npc." + id + ".trades." + set.getKey() + ".result", set.getValue().getResult());
                     if (!set.getValue().getIngredients().isEmpty() && set.getValue().getIngredients().size() > 0) {
-                        npcConfig.set("npc."+id+".trades."+set.getKey()+".ingridient1", set.getValue().getIngredients().get(0));
+                        npcConfig.set("npc." + id + ".trades." + set.getKey() + ".ingridient1", set.getValue().getIngredients().get(0));
                         if (set.getValue().getIngredients().size() > 1) {
-                            npcConfig.set("npc."+id+".trades."+set.getKey()+".ingridient2", set.getValue().getIngredients().get(1));
+                            npcConfig.set("npc." + id + ".trades." + set.getKey() + ".ingridient2", set.getValue().getIngredients().get(1));
                         }
                     }
                 }
 
             } else {
-                npcConfig.set("npc."+id+".trades", null);
+                npcConfig.set("npc." + id + ".trades", null);
             }
 
         } catch (NullPointerException npe) {
-            WanderingVendors.getPlugin().getLogger().severe("There was an errer while saving NPC "+id+" - required field not set");
+            WanderingVendors.getPlugin().getLogger().severe("There was an errer while saving NPC " + id + " - required field not set");
             return false;
         }
 
@@ -114,18 +120,18 @@ public class NPCManager {
     }
 
     public WVNPC loadNpc(String id) {
-        Location loc = npcConfig.getLocation("npc."+id+".location");
-        String customName = npcConfig.getString("npc."+id+".customname");
+        Location loc = npcConfig.getLocation("npc." + id + ".location");
+        String customName = npcConfig.getString("npc." + id + ".customname");
         HashMap<String, MerchantRecipe> trades = new HashMap<>();
 
-        ConfigurationSection tradeSection = npcConfig.getConfigurationSection("npc."+id+".trades");
+        ConfigurationSection tradeSection = npcConfig.getConfigurationSection("npc." + id + ".trades");
         for (String pointer : tradeSection.getKeys(false)) {
             try {
-                ItemStack result = npcConfig.getItemStack("npc."+id+".trades."+pointer+".result");
-                int uses = npcConfig.getInt("npc."+id+".trades."+pointer+".uses");
+                ItemStack result = npcConfig.getItemStack("npc." + id + ".trades." + pointer + ".result");
+                int uses = npcConfig.getInt("npc." + id + ".trades." + pointer + ".uses");
                 MerchantRecipe recipe = new MerchantRecipe(result, uses);
-                ItemStack ing1 = npcConfig.getItemStack("npc."+id+".trades."+pointer+".ingridient1");
-                ItemStack ing2 = npcConfig.getItemStack("npc."+id+".trades."+pointer+".ingridient2");
+                ItemStack ing1 = npcConfig.getItemStack("npc." + id + ".trades." + pointer + ".ingridient1");
+                ItemStack ing2 = npcConfig.getItemStack("npc." + id + ".trades." + pointer + ".ingridient2");
 
                 if (ing1 != null) {
                     recipe.addIngredient(ing1);
@@ -134,13 +140,13 @@ public class NPCManager {
                     recipe.addIngredient(ing2);
                 }
                 if (recipe.getIngredients().size() == 0) {
-                    WanderingVendors.getPlugin().getLogger().severe("Failed to load trade "+pointer+" for NPC "+id);
+                    WanderingVendors.getPlugin().getLogger().severe("Failed to load trade " + pointer + " for NPC " + id);
                     continue;
                 }
                 trades.put(pointer, recipe);
 
             } catch (NullPointerException e) {
-                WanderingVendors.getPlugin().getLogger().severe("Failed to load trade "+pointer+" for NPC "+id);
+                WanderingVendors.getPlugin().getLogger().severe("Failed to load trade " + pointer + " for NPC " + id);
             }
 
         }

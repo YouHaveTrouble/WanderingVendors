@@ -4,7 +4,9 @@ import eu.endermite.wanderingvendors.commands.MainCommand;
 import eu.endermite.wanderingvendors.config.ConfigCache;
 import eu.endermite.wanderingvendors.config.CreatorTradesConfig;
 import eu.endermite.wanderingvendors.gui.TradeCreator;
-import eu.endermite.wanderingvendors.gui.TradeList;
+import eu.endermite.wanderingvendors.gui.TradeListMain;
+import eu.endermite.wanderingvendors.gui.TradeListSingle;
+import eu.endermite.wanderingvendors.listeners.VendorClickListener;
 import eu.endermite.wanderingvendors.listeners.WanderingTraderSpawn;
 import eu.endermite.wanderingvendors.npc.NPCManager;
 import org.bukkit.Bukkit;
@@ -23,7 +25,9 @@ public final class WanderingVendors extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new WanderingTraderSpawn(), this);
         Bukkit.getPluginManager().registerEvents(new TradeCreator(), this);
-        Bukkit.getPluginManager().registerEvents(new TradeList(), this);
+        Bukkit.getPluginManager().registerEvents(new TradeListMain(), this);
+        Bukkit.getPluginManager().registerEvents(new TradeListSingle(), this);
+        Bukkit.getPluginManager().registerEvents(new VendorClickListener(), this);
         getCommand("wanderingvendors").setExecutor(new MainCommand());
         getCommand("wanderingvendors").setTabCompleter(new MainCommand());
     }

@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,20 +16,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class TradeList implements Listener {
+public class TradeListMain implements Listener {
 
     private static final NamespacedKey key = new NamespacedKey(WanderingVendors.getPlugin(), "guiitem");
     private static final NamespacedKey keyid = new NamespacedKey(WanderingVendors.getPlugin(), "guiitemid");
+    private static final NamespacedKey vendor = new NamespacedKey(WanderingVendors.getPlugin(), "vendor");
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClickEvent(InventoryClickEvent e) {
         if (e.getWhoClicked() instanceof Player) {
             Player p = ((Player) e.getWhoClicked()).getPlayer();
-            if (!e.getWhoClicked().getOpenInventory().getTitle().equalsIgnoreCase("Trade List"))
+            if (!e.getWhoClicked().getOpenInventory().getTitle().equals("Trade List"))
                 return;
 
             if (e.getClickedInventory() == null)
@@ -44,18 +45,17 @@ public class TradeList implements Listener {
 
             if (e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(keyid, PersistentDataType.STRING) != null) {
                 String id = e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(keyid, PersistentDataType.STRING);
-                TradeCreator creator = new TradeCreator();
-                creator.openGui(p, id);
+                TradeCreator.openGui(p, null, id);
             }
             if (e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING) != null) {
                 switch (e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING)) {
                     case ("next"):
                         int nextpage = e.getClickedInventory().getItem(49).getAmount();
-                        openGui(p, nextpage);
+                        openGui(p, nextpage, WanderingVendors.getConfigCache().getMerchantTrades(), "Trade List", null);
                         break;
                     case  ("previous"):
                         int prevpage = e.getClickedInventory().getItem(49).getAmount()-2;
-                        openGui(p, prevpage);
+                        openGui(p, prevpage, WanderingVendors.getConfigCache().getMerchantTrades(), "Trade List", null);
                         break;
                 }
             }
@@ -63,9 +63,9 @@ public class TradeList implements Listener {
         }
     }
 
-    public void openGui(Player player, int page) {
+    public static void openGui(Player player, int page, HashMap<String, MerchantRecipe> cache, String title, String traderEntity) {
 
-        Inventory inv = Bukkit.createInventory(null, 54, "Trade List");
+        Inventory inv = Bukkit.createInventory(null, 54, title);
 
         int id = 44 * page;
         int pagenum = page+1;
@@ -81,6 +81,15 @@ public class TradeList implements Listener {
         goldmeta.setDisplayName(" ");
         goldmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "block");
         gold.setItemMeta(goldmeta);
+
+        ItemStack add = new ItemStack(Material.CHORUS_PLANT, 1);
+        ItemMeta addmeta = add.getItemMeta();
+        addmeta.setDisplayName(" ");
+        addmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "add");
+        if (traderEntity != null) {
+            addmeta.getPersistentDataContainer().set(vendor, PersistentDataType.STRING, traderEntity);
+        }
+        add.setItemMeta(addmeta);
 
         ItemStack previous = new ItemStack(Material.PAPER, 1);
         ItemMeta previousmeta = previous.getItemMeta();
@@ -100,7 +109,11 @@ public class TradeList implements Listener {
         currentmeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "block");
         current.setItemMeta(currentmeta);
 
-        inv.setItem(45, blue);
+        if (traderEntity != null) {
+            inv.setItem(45, add);
+        } else {
+            inv.setItem(45, blue);
+        }
         inv.setItem(46, blue);
         inv.setItem(47, gold);
         inv.setItem(49, current);
@@ -120,8 +133,6 @@ public class TradeList implements Listener {
         } else {
             inv.setItem(50, blue);
         }
-
-        HashMap<String, MerchantRecipe> cache = new HashMap<>(WanderingVendors.getConfigCache().getMerchantTrades());
 
         if (page != 0) {
             int iter = 0;
@@ -148,12 +159,7 @@ public class TradeList implements Listener {
                 iter++;
             }
         }
-
-
-
-
         player.openInventory(inv);
-
     }
 
 }

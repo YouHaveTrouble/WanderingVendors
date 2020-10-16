@@ -2,7 +2,7 @@ package eu.endermite.wanderingvendors.commands;
 
 import eu.endermite.wanderingvendors.WanderingVendors;
 import eu.endermite.wanderingvendors.gui.TradeCreator;
-import eu.endermite.wanderingvendors.gui.TradeList;
+import eu.endermite.wanderingvendors.gui.TradeListMain;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -49,8 +49,8 @@ public class MainCommand implements TabExecutor {
                     return true;
                 }
                 if (sender instanceof Player) {
-                    TradeList list = new TradeList();
-                    list.openGui((Player) sender, 0);
+                    TradeListMain list = new TradeListMain();
+                    list.openGui((Player) sender, 0, WanderingVendors.getConfigCache().getMerchantTrades(), "Trade List", null);
                 } else {
                     sender.sendMessage(ChatColor.RED + "Can only be used in-game");
                 }

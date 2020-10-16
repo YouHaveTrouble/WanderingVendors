@@ -1,5 +1,6 @@
 package eu.endermite.wanderingvendors.gui;
 
+import eu.endermite.wanderingvendors.WanderingVendors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
@@ -17,8 +18,8 @@ public class RefreshGuis {
                 try {
                     int page = p.getOpenInventory().getItem(49).getAmount();
                     page = page-1;
-                    TradeList tradelist = new TradeList();
-                    tradelist.openGui(p, page);
+                    TradeListMain tradelist = new TradeListMain();
+                    tradelist.openGui(p, page, WanderingVendors.getConfigCache().getMerchantTrades(), "Trade List", null);
                 } catch (Exception ignored) {}
             }
 

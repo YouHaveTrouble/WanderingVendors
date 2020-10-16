@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,13 +16,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+// This is absolutely fucking awful code and I know this. TODO rewrite this
 
 public class TradeCreator implements Listener {
 
@@ -29,6 +32,8 @@ public class TradeCreator implements Listener {
 
     private static final NamespacedKey key = new NamespacedKey(WanderingVendors.getPlugin(), "guiitem");
     private static final NamespacedKey tradeidkey = new NamespacedKey(WanderingVendors.getPlugin(), "tradeid");
+    private static final NamespacedKey merchantId = new NamespacedKey(WanderingVendors.getPlugin(), "vendor");
+    private static final NamespacedKey trade = new NamespacedKey(WanderingVendors.getPlugin(), "trade");
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClickEvent(InventoryClickEvent e) {
@@ -67,14 +72,29 @@ public class TradeCreator implements Listener {
                     e.setCancelled(true);
                     break;
                 case "delete":
-                    id = e.getClickedInventory().getItem(1).getItemMeta().getPersistentDataContainer().get(tradeidkey, PersistentDataType.STRING);
-                    if (id != null) {
-                        try {
-                            WanderingVendors.getConfigCache().deleteTrade(id);
-                        } catch (NullPointerException ignored) {}
-                        try {
-                            CreatorTradesConfig.deleteTrade(id);
-                        } catch (NullPointerException ignored) {}
+                    id = e.getClickedInventory().getItem(8).getItemMeta().getPersistentDataContainer().get(trade, PersistentDataType.STRING);
+                    String merchantUuid = e.getClickedInventory().getItem(8).getItemMeta().getPersistentDataContainer().get(merchantId, PersistentDataType.STRING);
+                    Merchant merchant = (Merchant) Bukkit.getEntity(UUID.fromString(merchantUuid));
+                    if (merchant != null) {
+                        List<MerchantRecipe> recipes = merchant.getRecipes();
+                        List<MerchantRecipe> newRecipes = new ArrayList<>();
+                        int loop = 0;
+                        int idToDelete = Integer.parseInt(id);
+                        for (MerchantRecipe recipe : recipes) {
+                            if (loop == idToDelete)
+                                continue;
+                            newRecipes.add(recipe);
+                        }
+                        merchant.setRecipes(recipes);
+                    } else {
+                        if (id != null) {
+                            try {
+                                WanderingVendors.getConfigCache().deleteTrade(id);
+                            } catch (NullPointerException ignored) {}
+                            try {
+                                CreatorTradesConfig.deleteTrade(id);
+                            } catch (NullPointerException ignored) {}
+                        }
                     }
                     e.setCancelled(true);
                     p.closeInventory();
@@ -102,18 +122,36 @@ public class TradeCreator implements Listener {
                             recipe.addIngredient(ingridient2);
                         }
                         try {
-                            id = e.getClickedInventory().getItem(1).getItemMeta().getPersistentDataContainer().get(tradeidkey, PersistentDataType.STRING);
-                            if (id == null) {
-                                UUID uuid = UUID.randomUUID();
-                                WanderingVendors.getConfigCache().addTrade(uuid.toString(), recipe);
-                                CreatorTradesConfig.saveTrade(uuid.toString(), recipe);
+                            String merchantUuidString = e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(merchantId, PersistentDataType.STRING);
+                            String tradeId = e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(trade, PersistentDataType.STRING);
+                            UUID merchantUuid2 = UUID.fromString(merchantUuidString);
+                            Merchant merchant2 = (Merchant) Bukkit.getEntity(merchantUuid2);
+                            if (Integer.parseInt(tradeId) >= merchant2.getRecipeCount()) {
+                                List<MerchantRecipe> recipes = merchant2.getRecipes();
+                                List<MerchantRecipe> newRecipes = new ArrayList<>(recipes);
+                                newRecipes.add(recipe);
+                                merchant2.setRecipes(newRecipes);
                             } else {
-                                WanderingVendors.getConfigCache().editTrade(id, recipe);
-                                CreatorTradesConfig.saveTrade(id, recipe);
+                                merchant2.setRecipe(Integer.parseInt(tradeId), recipe);
                             }
-                        } catch (NullPointerException | IllegalArgumentException e1) {
-                            e1.printStackTrace();
+
+
+                        } catch (NullPointerException ex) {
+                            try {
+                                id = e.getClickedInventory().getItem(1).getItemMeta().getPersistentDataContainer().get(tradeidkey, PersistentDataType.STRING);
+                                if (id == null) {
+                                    UUID uuid = UUID.randomUUID();
+                                    WanderingVendors.getConfigCache().addTrade(uuid.toString(), recipe);
+                                    CreatorTradesConfig.saveTrade(uuid.toString(), recipe);
+                                } else {
+                                    WanderingVendors.getConfigCache().editTrade(id, recipe);
+                                    CreatorTradesConfig.saveTrade(id, recipe);
+                                }
+                            } catch (NullPointerException | IllegalArgumentException e1) {
+                                e1.printStackTrace();
+                            }
                         }
+
                         RefreshGuis.refresh();
                         p.closeInventory();
                     }
@@ -155,8 +193,33 @@ public class TradeCreator implements Listener {
         player.openInventory(inv);
     }
 
-    public void openGui(Player player, String recipeID) {
-        MerchantRecipe recipe = WanderingVendors.getConfigCache().getMerchantTrades().get(recipeID);
+    public static void openGui(Player player, String merchantUUID, String recipeId) {
+
+        MerchantRecipe recipe;
+        Merchant merchant = null;
+        Entity merchantEntity = null;
+
+        if (merchantUUID == null) {
+            try {
+                recipe = WanderingVendors.getConfigCache().getMerchantTrades().get(recipeId);
+            } catch (Exception e) {
+                return;
+            }
+
+        } else {
+            merchantEntity = Bukkit.getEntity(UUID.fromString(merchantUUID));
+            merchant = (Merchant) merchantEntity;
+            int recipeInt = Integer.parseInt(recipeId);
+            if (recipeInt >= merchant.getRecipeCount()) {
+                recipe = new MerchantRecipe(new ItemStack(Material.AIR, 1), 1);
+                recipe.addIngredient(new ItemStack(Material.AIR, 1));
+                recipe.addIngredient(new ItemStack(Material.AIR, 1));
+            } else {
+                recipe = merchant.getRecipe(recipeInt);
+            }
+
+        }
+
         tradeuses = recipe.getMaxUses();
         Inventory inv = Bukkit.createInventory(null, InventoryType.DROPPER, "Trade Creation");
 
@@ -171,6 +234,12 @@ public class TradeCreator implements Listener {
 
         ItemStack save = new ItemStack(Material.WRITABLE_BOOK, 1);
         ItemStack saveIcon = IconCreator.createIcon(save, "save", "&l&eSave Trade");
+        if (merchant != null) {
+            ItemMeta saveIconMeta = saveIcon.getItemMeta();
+            saveIconMeta.getPersistentDataContainer().set(merchantId, PersistentDataType.STRING, merchantEntity.getUniqueId().toString());
+            saveIconMeta.getPersistentDataContainer().set(trade, PersistentDataType.STRING, recipeId);
+            saveIcon.setItemMeta(saveIconMeta);
+        }
 
         ItemStack cancel = new ItemStack(Material.BARRIER, 1);
         ItemStack cancelIcon = IconCreator.createIcon(cancel, "cancel", "&l&cCancel");
